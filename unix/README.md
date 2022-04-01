@@ -51,7 +51,7 @@ make test
 ```sh
 sudo su - root
 apt update
-apt install build-essential git autoconf libtool patchelf sqlite3 expat libcurl4-openssl-dev curl zip unzip tar libproj-dev swig
+apt install build-essential git autoconf libtool patchelf sqlite3 expat libcurl4-openssl-dev curl zip unzip tar libproj-dev swig unixodbc-dev msodbcsql17
 wget https://github.com/Esri/file-geodatabase-api/raw/master/FileGDB_API_1.5.2/FileGDB_API-RHEL7-64gcc83.tar.gz
 tar xvfz FileGDB_API-RHEL7-64gcc83.tar.gz
 # need to remove conflicting stdc libs
@@ -71,5 +71,8 @@ make -j4 -f gdal-makefile
 make -j4 -f gdal-makefile gdal
 # edit vcproj files if custom version wanted
 make
+# install https://docs.microsoft.com/sv-se/dotnet/core/install/linux-debian
+# hack GNUmakefile linkall to include *.so libs from FileGDB
+make pack
 make pack
 ```
