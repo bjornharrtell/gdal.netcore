@@ -46,3 +46,30 @@ make pack
 make test
 ```
 
+## Debian 11 w/ FileGDB
+
+```sh
+sudo su - root
+apt update
+apt install build-essential git autoconf libtool patchelf sqlite3 expat libcurl4-openssl-dev curl zip unzip tar libproj-dev
+wget https://github.com/Esri/file-geodatabase-api/raw/master/FileGDB_API_1.5.2/FileGDB_API-RHEL7-64gcc83.tar.gz
+tar xvfz FileGDB_API-RHEL7-64gcc83.tar.gz
+# need to remove conflicting stdc libs
+rm /root/FileGDB_API-RHEL7-64gcc83/lib/libstdc*
+echo '/root/FileGDB_API-RHEL7-64gcc83/lib' >/etc/ld.so.conf.d/fgdb.conf
+ldconfig
+git clone https://github.com/MaxRev-Dev/gdal.netcore.git
+cd gdal.netcore/unix
+# remove hdf and curl support
+# change to shared/GdalCore.opt VCPKG_REQUIRE_UNIX_DYNAMIC=libpq
+# remove references to hdf curl in gdal-makefile
+make -f vcpkg-makefile
+# add --with-fgdb=/root/FileGDB_API-RHEL7-64gcc83 \ to gdal-makefile at appropriate place
+# go to source-gdal and git checkout v3.3.3
+make -j4 -f gdal-makefile
+# fix RID.opt change to DEL_DIR=rm -rf
+make -j4 -f gdal-makefile gdal
+# edit vcproj files if custom version wanted
+make
+make pack
+```
